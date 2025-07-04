@@ -1,0 +1,16 @@
+package com.arka.supplier_service.infraestructure.adapters.driven.amqp.dto;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class StockReceivedEventDto {
+    private String warehouseCode;
+    private List<StockItemDto> items;
+}

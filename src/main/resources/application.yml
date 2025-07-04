@@ -1,0 +1,67 @@
+spring:
+  application:
+    name: supplier-service
+
+
+
+
+
+  flyway:
+    url: jdbc:postgresql://supplierdb.c4b4ogqqybf1.us-east-1.rds.amazonaws.com:5432/postgres
+    user: postgres
+    password: LONque123*
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  rabbitmq:
+    host: b-9c37d3b2-a2d6-4eec-b2ba-9d00caa37773.mq.us-east-1.on.aws
+    port: 5671
+    username: jlondono
+    password: LONque12345*
+    ssl:
+      enabled: true
+
+  main:
+    web-application-type: reactive
+
+  jackson:
+    serialization:
+      indent-output: true
+
+postgresql:
+  host: supplierdb.c4b4ogqqybf1.us-east-1.rds.amazonaws.com
+  port: 5432
+  database: postgres
+  schema: public
+  username: postgres
+  password: LONque123*
+  ssl: allow
+
+server:
+  port: 8082
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    org.springframework.amqp: DEBUG
+    org.springframework.amqp.rabbit: DEBUG
+    org.flywaydb: DEBUG
+
+catalog:
+  url: http://arka-alb-1425980331.us-east-1.elb.amazonaws.com
+
+security:
+  jwt:
+    secret: "LONque1234567890LONque1234567890abcd"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always

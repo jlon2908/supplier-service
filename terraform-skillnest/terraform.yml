@@ -1,0 +1,96 @@
+name: terraform-deploy-all
+
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+
+      ###################################################
+      # MODULE 1: terraform-preinfra
+      ###################################################
+      - name: Terraform Init (preinfra)
+        run: terraform init -reconfigure
+        working-directory: terraform-skillnest/terraform-preinfra
+
+      - name: Terraform Refresh (preinfra)
+        run: terraform refresh -var="project=arka" -var="environment=dev" -var='default_tags={Owner="Jonathan",Department="Engineering"}' -var="artifacts_bucket_name=arka-dev-artifacts" -var='ecr_repositories=[{name="catalog-service",images_to_keep=10,allowed_accounts=[]}]'
+        working-directory: terraform-skillnest/terraform-preinfra
+
+      - name: Terraform Plan (preinfra)
+        run: terraform plan -input=false -lock-timeout=60s -out=tfplan.binary -var="project=arka" -var="environment=dev" -var='default_tags={Owner="Jonathan",Department="Engineering"}' -var="artifacts_bucket_name=arka-dev-artifacts" -var='ecr_repositories=[{name="catalog-service",images_to_keep=10,allowed_accounts=[]}]'
+        working-directory: terraform-skillnest/terraform-preinfra
+
+      - name: Terraform Apply (preinfra)
+        run: terraform apply -input=false -auto-approve tfplan.binary
+        working-directory: terraform-skillnest/terraform-preinfra
+        continue-on-error: true
+
+
+
+      ###################################################
+      # MODULE 2: terraform-api-ecs
+      ###################################################
+      - name: Grant execute permission to mvnw
+        run: chmod +x ./mvnw
+
+      - name: Build JAR with Maven
+        run: ./mvnw clean package -DskipTests
+
+
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Get ECR login
+        run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 148761677807.dkr.ecr.us-east-1.amazonaws.com
+
+      - name: Build Docker image
+        run: docker build -t catalog-service:${{ github.sha }} .
+
+      - name: Tag Docker image for ECR
+        run: docker tag catalog-service:${{ github.sha }} 148761677807.dkr.ecr.us-east-1.amazonaws.com/catalog-service:${{ github.sha }}
+
+      - name: Push Docker image to ECR
+        run: docker push 148761677807.dkr.ecr.us-east-1.amazonaws.com/catalog-service:${{ github.sha }}
+
+      - name: Set image uri output
+        run: echo "IMAGE_URI=148761677807.dkr.ecr.us-east-1.amazonaws.com/catalog-service:${{ github.sha }}" >> $GITHUB_ENV
+
+      - name: Terraform Init (api-ecs)
+        run: terraform init -reconfigure
+        working-directory: terraform-skillnest/terraform-api-ecs
+
+      - name: Terraform Refresh (api-ecs)
+        run: terraform refresh -var="environment=dev" -var="project=arka" -var="db_r2dbc_url=${{ secrets.DB_R2DBC_URL }}" -var="db_jdbc_url=${{ secrets.DB_JDBC_URL }}" -var="db_username=${{ secrets.DB_USERNAME }}" -var="db_password=${{ secrets.DB_PASSWORD }}" -var="jwt_secret=${{ secrets.JWT_SECRET }}" -var="container_image=${{ env.IMAGE_URI }}" -var="vpc_id=${{ secrets.VPC_ID }}" -var='public_subnets=["subnet-03378a45690a7799c","subnet-0156d0329077c70c7"]' -var='private_subnets=["subnet-057a322f484b9f962","subnet-09ee219f4838cb06f"]'
+        working-directory: terraform-skillnest/terraform-api-ecs
+
+      - name: Terraform Plan (api-ecs)
+        run: terraform plan -input=false -lock-timeout=60s -out=tfplan.binary -var="environment=dev" -var="project=arka" -var="db_r2dbc_url=${{ secrets.DB_R2DBC_URL }}" -var="db_jdbc_url=${{ secrets.DB_JDBC_URL }}" -var="db_username=${{ secrets.DB_USERNAME }}" -var="db_password=${{ secrets.DB_PASSWORD }}" -var="jwt_secret=${{ secrets.JWT_SECRET }}" -var="container_image=${{ env.IMAGE_URI }}" -var="vpc_id=${{ secrets.VPC_ID }}" -var='public_subnets=["subnet-03378a45690a7799c","subnet-0156d0329077c70c7"]' -var='private_subnets=["subnet-057a322f484b9f962","subnet-09ee219f4838cb06f"]'
+        working-directory: terraform-skillnest/terraform-api-ecs
+
+      - name: Terraform Apply (api-ecs)
+        run: terraform apply -input=false -auto-approve tfplan.binary
+        working-directory: terraform-skillnest/terraform-api-ecs
+        continue-on-error: true
