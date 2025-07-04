@@ -1,7 +1,6 @@
 name: terraform-deploy-all
 
 
-
 on:
   push:
     branches:
