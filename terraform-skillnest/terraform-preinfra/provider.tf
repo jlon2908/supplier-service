@@ -7,9 +7,11 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "catalog-service-arka"
-    key = "preinfra/terraform.tfstate"
-    region = "us-east-1"
+    bucket         = "skillnest-terraform-states"
+    key            = "preinfra/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-locks"
+    encrypt        = true
   }
 }
 

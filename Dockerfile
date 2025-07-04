@@ -9,11 +9,5 @@ FROM eclipse-temurin:17-jdk-alpine
 VOLUME /tmp
 ARG JAR_FILE=target/supplier-service-0.0.1-SNAPSHOT.jar
 
-COPY global-bundle.pem /tmp/global-bundle.pem
-RUN keytool -import -trustcacerts -alias amazon-rds-root -file /tmp/global-bundle.pem -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit -noprompt
-
-
-
-
 COPY ${JAR_FILE} app.jar
 ENTRYPOINT ["java", "-jar", "/app.jar"]
