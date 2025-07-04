@@ -4,7 +4,7 @@ module "alb" {
   name_prefix                = var.name_prefix
   vpc_id                     = var.vpc_id
   public_subnets             = var.public_subnets
-  container_port             = 8080 # Ajusta si tu app escucha en otro puerto
+  container_port             = 8082 # Cambiado a 8082 para este microservicio
   tags                       = var.common_tags
   vpc_link_security_group_id = module.apigateway.vpc_link_security_group_id
 }
@@ -27,7 +27,7 @@ module "ecs" {
   name_prefix                = var.name_prefix
   vpc_id                     = var.vpc_id
   private_subnets            = var.private_subnets
-  container_port             = 8080
+  container_port             = 8082 # Cambiado a 8082 para este microservicio
   target_group_arn           = module.alb.target_group_arn
   vpc_link_security_group_id = module.apigateway.vpc_link_security_group_id
   alb_security_group_id      = module.alb.security_group_id
@@ -56,6 +56,18 @@ module "ecs" {
     {
       name  = "JWT_SECRET"
       value = var.jwt_secret
+    },
+    {
+      name  = "RABBITMQ_HOST"
+      value = var.rabbitmq_host
+    },
+    {
+      name  = "RABBITMQ_USERNAME"
+      value = var.rabbitmq_username
+    },
+    {
+      name  = "RABBITMQ_PASSWORD"
+      value = var.rabbitmq_password
     }
   ]
 }

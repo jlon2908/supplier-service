@@ -80,3 +80,18 @@ variable "private_subnets" {
   description = "IDs de las subnets privadas"
   type        = list(string)
 }
+
+variable "rabbitmq_host" {
+  description = "RabbitMQ host"
+  type        = string
+}
+
+variable "rabbitmq_username" {
+  description = "RabbitMQ username"
+  type        = string
+}
+
+variable "rabbitmq_password" {
+  description = "RabbitMQ password"
+  type        = string
+}

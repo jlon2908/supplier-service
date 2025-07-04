@@ -16,7 +16,7 @@ variable "public_subnets" {
 variable "container_port" {
   description = "Port the container listens on"
   type        = number
-  default     = 3000
+  default     = 8082
 }
 
 variable "tags" {
