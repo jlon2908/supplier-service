@@ -55,7 +55,7 @@ variable "common_tags" {
   description = "Common tags to apply to all resources"
   type        = map(string)
   default     = {
-    Project     = "catalog-service"
+    Project     = "supplier-service"
     Environment = "dev"
     Owner       = "arka"
   }

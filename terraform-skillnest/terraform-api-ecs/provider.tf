@@ -10,7 +10,7 @@ terraform {
 
   backend "s3" {
     bucket = "arka-dev-artifacts"
-    key    = "catalog-service/terraform.tfstate"
+    key    = "supplier-service/terraform.tfstate"
     region = "us-east-1"
   }
 }
