@@ -9,9 +9,11 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "arka-dev-artifacts"
-    key    = "supplier-service/terraform.tfstate"
-    region = "us-east-1"
+    bucket         = "skillnest-terraform-states"
+    key            = "api-ecs/dev/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-locks"
+    encrypt        = true
   }
 }
 
