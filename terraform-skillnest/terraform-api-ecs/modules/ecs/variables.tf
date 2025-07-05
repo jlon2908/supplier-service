@@ -57,3 +57,18 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "task_execution_role_arn" {
+  description = "ARN of the existing ECS task execution role"
+  type        = string
+}
+
+variable "log_group_name" {
+  description = "Name of the existing CloudWatch log group"
+  type        = string
+}
+
+variable "ecs_service_security_group_id" {
+  description = "ID of the existing ECS service security group"
+  type        = string
+}

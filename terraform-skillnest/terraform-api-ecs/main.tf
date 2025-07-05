@@ -28,7 +28,7 @@ module "ecs" {
   vpc_id                     = var.vpc_id
   private_subnets            = var.private_subnets
   container_port             = 8082 # Cambiado a 8082 para este microservicio
-  target_group_arn           = module.alb.target_group_arn
+  target_group_arn           = var.target_group_arn # Ahora se pasa como variable
   vpc_link_security_group_id = module.apigateway.vpc_link_security_group_id
   alb_security_group_id      = module.alb.security_group_id
   tags                       = var.common_tags
