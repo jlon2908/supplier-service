@@ -113,7 +113,7 @@ jobs:
             -var="ecs_service_security_group_id=sg-0d9dba80261e8ca15" \
             -var="log_group_name=/ecs/supplier-service" \
             'module.ecs.aws_ecs_service.this' \
-            'arn:aws:ecs:us-east-1:148761677807:service/arka-ecs-cluster/arka-supplier-service' || echo "Ya está importado o no existe"
+            'arka-ecs-cluster/arka-supplier-service' || echo "Ya está importado o no existe"
         working-directory: terraform-skillnest/terraform-api-ecs
 
       - name: Terraform Plan (api-ecs)

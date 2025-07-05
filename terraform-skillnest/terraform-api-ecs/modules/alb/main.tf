@@ -16,21 +16,15 @@ data "aws_lb_target_group" "existing" {
   arn = var.target_group_arn
 }
 
-# Listener
-resource "aws_lb_listener" "http" {
+# Listener (referencia al existente, no lo crea)
+data "aws_lb_listener" "http" {
   load_balancer_arn = data.aws_lb.main.arn
-  port              = "80"
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = data.aws_lb_target_group.existing.arn
-  }
+  port              = 80
 }
 
 # Listener Rule for supplier-service paths
 resource "aws_lb_listener_rule" "supplier_service" {
-  listener_arn = aws_lb_listener.http.arn
+  listener_arn = data.aws_lb_listener.http.arn
   priority     = 10
 
   action {
