@@ -95,3 +95,23 @@ variable "rabbitmq_password" {
   description = "RabbitMQ password"
   type        = string
 }
+
+variable "target_group_arn" {
+  description = "ARN del Target Group existente para el ALB"
+  type        = string
+}
+
+variable "task_execution_role_arn" {
+  description = "ARN del IAM Role de ejecución de tareas ECS"
+  type        = string
+}
+
+variable "ecs_service_security_group_id" {
+  description = "ID del Security Group para el servicio ECS"
+  type        = string
+}
+
+variable "log_group_name" {
+  description = "Nombre del Log Group de CloudWatch para ECS"
+  type        = string
+}
