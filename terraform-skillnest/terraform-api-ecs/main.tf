@@ -70,4 +70,8 @@ module "ecs" {
       value = var.rabbitmq_password
     }
   ]
+
+  task_execution_role_arn      = var.task_execution_role_arn
+  log_group_name               = var.log_group_name
+  ecs_service_security_group_id = var.ecs_service_security_group_id
 }
