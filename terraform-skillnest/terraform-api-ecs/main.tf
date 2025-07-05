@@ -20,6 +20,8 @@ module "apigateway" {
   alb_dns_name    = module.alb.load_balancer_dns
   tags            = var.common_tags
   allowed_origins = ["*"] # Cambia esto si quieres restringir CORS
+  vpc_link_security_group_id = "sg-0d9dba80261e8ca15"
+  log_group_name = "/aws/apigateway/arka"
 }
 
 module "ecs" {

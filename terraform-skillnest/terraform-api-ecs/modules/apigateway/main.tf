@@ -81,46 +81,7 @@ resource "aws_apigatewayv2_integration" "alb" {
   }
 }
 
-# Security Group for VPC Link
-resource "aws_security_group" "vpc_link" {
-  count       = var.vpc_link_security_group_id == null ? 1 : 0
-  name        = "${var.name_prefix}-vpclink-sg"
-  description = "Security group for API Gateway VPC Link"
-  vpc_id      = var.vpc_id
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow inbound HTTP traffic from API Gateway"
-  }
-
-  egress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow outbound HTTP traffic to ALB"
-  }
-
-  tags = var.tags
-}
-
 data "aws_security_group" "vpc_link" {
   count = var.vpc_link_security_group_id != null ? 1 : 0
   id    = var.vpc_link_security_group_id
-}
-
-# CloudWatch Log Group
-resource "aws_cloudwatch_log_group" "api_gateway" {
-  count             = var.log_group_name == null ? 1 : 0
-  name              = "/aws/apigateway/${var.name_prefix}"
-  retention_in_days = 30
-  tags              = var.tags
-}
-
-data "aws_cloudwatch_log_group" "api_gateway" {
-  count = var.log_group_name != null ? 1 : 0
-  name  = var.log_group_name
 }
