@@ -7,6 +7,7 @@ module "alb" {
   container_port             = 8082 # Cambiado a 8082 para este microservicio
   tags                       = var.common_tags
   vpc_link_security_group_id = module.apigateway.vpc_link_security_group_id
+  target_group_arn           = var.target_group_arn
 }
 
 module "apigateway" {
