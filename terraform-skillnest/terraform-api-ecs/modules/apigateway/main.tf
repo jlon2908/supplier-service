@@ -13,10 +13,18 @@ resource "aws_apigatewayv2_api" "main" {
   tags = var.tags
 }
 
+data "aws_security_group" "vpc_link" {
+  id = var.vpc_link_security_group_id
+}
+
+data "aws_cloudwatch_log_group" "api_gateway" {
+  name = var.log_group_name
+}
+
 # VPC Link
 resource "aws_apigatewayv2_vpc_link" "main" {
   name               = "${var.name_prefix}-vpclink"
-  security_group_ids = [var.vpc_link_security_group_id != null ? data.aws_security_group.vpc_link[0].id : aws_security_group.vpc_link[0].id]
+  security_group_ids = [data.aws_security_group.vpc_link.id]
   subnet_ids         = var.private_subnets
   tags               = var.tags
 }
@@ -28,7 +36,7 @@ resource "aws_apigatewayv2_stage" "main" {
   auto_deploy = true
 
   access_log_settings {
-    destination_arn = var.log_group_name != null ? data.aws_cloudwatch_log_group.api_gateway[0].arn : aws_cloudwatch_log_group.api_gateway[0].arn
+    destination_arn = data.aws_cloudwatch_log_group.api_gateway.arn
     format = jsonencode({
       requestId        = "$context.requestId"
       requestTime      = "$context.requestTime"
@@ -79,9 +87,4 @@ resource "aws_apigatewayv2_integration" "alb" {
   tls_config {
     server_name_to_verify = var.alb_dns_name
   }
-}
-
-data "aws_security_group" "vpc_link" {
-  count = var.vpc_link_security_group_id != null ? 1 : 0
-  id    = var.vpc_link_security_group_id
 }
