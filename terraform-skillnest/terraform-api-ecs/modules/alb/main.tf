@@ -39,8 +39,7 @@ resource "aws_lb_listener_rule" "supplier_service" {
         "/api/suppliers/*",
         "/api/supplier-orders",
         "/api/supplier-orders/*",
-        "/api/receipts",
-        "/api/receipts/*"
+        "/api/receipts"
       ]
     }
   }
