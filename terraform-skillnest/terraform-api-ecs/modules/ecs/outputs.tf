@@ -15,5 +15,5 @@ output "task_definition_arn" {
 
 output "security_group_id" {
   description = "Security group ID for ECS service"
-  value       = aws_security_group.ecs_service.id
+  value       = var.ecs_service_security_group_id
 }

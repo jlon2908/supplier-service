@@ -29,3 +29,8 @@ variable "vpc_link_security_group_id" {
   description = "Security group ID of the VPC Link"
   type        = string
 }
+
+variable "target_group_arn" {
+  description = "ARN del Target Group para el ALB"
+  type        = string
+}
