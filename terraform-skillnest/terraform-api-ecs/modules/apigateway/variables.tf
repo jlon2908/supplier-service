@@ -34,3 +34,15 @@ variable "allowed_origins" {
   type        = list(string)
   default     = ["*"] # Puedes cambiar esto según tus necesidades
 }
+
+variable "vpc_link_security_group_id" {
+  description = "ID de un Security Group existente para el VPC Link (opcional)"
+  type        = string
+  default     = null
+}
+
+variable "log_group_name" {
+  description = "Nombre de un Log Group existente para API Gateway (opcional)"
+  type        = string
+  default     = null
+}

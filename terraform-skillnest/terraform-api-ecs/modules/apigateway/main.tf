@@ -16,10 +16,9 @@ resource "aws_apigatewayv2_api" "main" {
 # VPC Link
 resource "aws_apigatewayv2_vpc_link" "main" {
   name               = "${var.name_prefix}-vpclink"
-  security_group_ids = [aws_security_group.vpc_link.id]
+  security_group_ids = [var.vpc_link_security_group_id != null ? data.aws_security_group.vpc_link[0].id : aws_security_group.vpc_link[0].id]
   subnet_ids         = var.private_subnets
-
-  tags = var.tags
+  tags               = var.tags
 }
 
 # API Stage
@@ -29,7 +28,7 @@ resource "aws_apigatewayv2_stage" "main" {
   auto_deploy = true
 
   access_log_settings {
-    destination_arn = aws_cloudwatch_log_group.api_gateway.arn
+    destination_arn = var.log_group_name != null ? data.aws_cloudwatch_log_group.api_gateway[0].arn : aws_cloudwatch_log_group.api_gateway[0].arn
     format = jsonencode({
       requestId        = "$context.requestId"
       requestTime      = "$context.requestTime"
@@ -84,6 +83,7 @@ resource "aws_apigatewayv2_integration" "alb" {
 
 # Security Group for VPC Link
 resource "aws_security_group" "vpc_link" {
+  count       = var.vpc_link_security_group_id == null ? 1 : 0
   name        = "${var.name_prefix}-vpclink-sg"
   description = "Security group for API Gateway VPC Link"
   vpc_id      = var.vpc_id
@@ -107,9 +107,20 @@ resource "aws_security_group" "vpc_link" {
   tags = var.tags
 }
 
+data "aws_security_group" "vpc_link" {
+  count = var.vpc_link_security_group_id != null ? 1 : 0
+  id    = var.vpc_link_security_group_id
+}
+
 # CloudWatch Log Group
 resource "aws_cloudwatch_log_group" "api_gateway" {
+  count             = var.log_group_name == null ? 1 : 0
   name              = "/aws/apigateway/${var.name_prefix}"
   retention_in_days = 30
   tags              = var.tags
+}
+
+data "aws_cloudwatch_log_group" "api_gateway" {
+  count = var.log_group_name != null ? 1 : 0
+  name  = var.log_group_name
 }

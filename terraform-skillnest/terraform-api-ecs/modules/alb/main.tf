@@ -52,6 +52,11 @@ resource "aws_lb" "main" {
   tags = var.tags
 }
 
+# Data source to reference the existing Target Group
+data "aws_lb_target_group" "existing" {
+  arn = var.target_group_arn
+}
+
 # Listener
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.main.arn
@@ -60,7 +65,7 @@ resource "aws_lb_listener" "http" {
 
   default_action {
     type             = "forward"
-    target_group_arn = var.target_group_arn
+    target_group_arn = data.aws_lb_target_group.existing.arn
   }
 }
 
@@ -71,7 +76,7 @@ resource "aws_lb_listener_rule" "supplier_service" {
 
   action {
     type             = "forward"
-    target_group_arn = var.target_group_arn
+    target_group_arn = data.aws_lb_target_group.existing.arn
   }
 
   condition {
