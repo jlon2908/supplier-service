@@ -1,6 +1,6 @@
 output "load_balancer_dns" {
   description = "DNS name of the load balancer"
-  value       = aws_lb.main.dns_name
+  value       = data.aws_lb.main.dns_name
 }
 
 output "security_group_id" {

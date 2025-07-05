@@ -1,21 +1,14 @@
+# Referencia al ALB existente por nombre
+# Cambia "arka-alb" por el nombre real si es diferente
+
+data "aws_lb" "main" {
+  name = "arka-alb"
+}
+
 # Data source to reference the existing Security Group for ALB
 data "aws_security_group" "alb" {
   name   = "arka-alb-sg"
   vpc_id = var.vpc_id
-}
-
-# Application Load Balancer
-resource "aws_lb" "main" {
-  name               = "${var.name_prefix}-alb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [data.aws_security_group.alb.id]
-  subnets            = var.public_subnets
-
-  enable_deletion_protection = false
-  idle_timeout               = 60
-
-  tags = var.tags
 }
 
 # Data source to reference the existing Target Group
@@ -25,7 +18,7 @@ data "aws_lb_target_group" "existing" {
 
 # Listener
 resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.main.arn
+  load_balancer_arn = data.aws_lb.main.arn
   port              = "80"
   protocol          = "HTTP"
 
@@ -48,8 +41,11 @@ resource "aws_lb_listener_rule" "supplier_service" {
   condition {
     path_pattern {
       values = [
+        "/api/suppliers",
         "/api/suppliers/*",
+        "/api/supplier-orders",
         "/api/supplier-orders/*",
+        "/api/receipts",
         "/api/receipts/*"
       ]
     }
