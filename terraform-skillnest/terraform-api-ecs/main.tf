@@ -27,7 +27,7 @@ module "apigateway" {
 module "ecs" {
   source = "./modules/ecs"
 
-  name_prefix                = var.name_prefix
+  name_prefix                = "arka-supplier" # Cambiado para evitar conflicto de nombre
   vpc_id                     = var.vpc_id
   private_subnets            = var.private_subnets
   container_port             = 8082 # Cambiado a 8082 para este microservicio
