@@ -42,6 +42,7 @@ public class SupplierReceiptRestMapper {
                                 .quantityReceived(detail.getQuantityReceived())
                                 .build())
                         .collect(Collectors.toList()))
+                .warehouseCode(domain.getWarehouseCode())
                 .build();
-}
+    }
 }

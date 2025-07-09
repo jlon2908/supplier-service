@@ -12,7 +12,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class SupplierReceiptResponseDto {
     private UUID id;
     private UUID supplierOrderId;
@@ -20,5 +19,6 @@ public class SupplierReceiptResponseDto {
     private String notes;
     private LocalDateTime receivedDate;
     private List<SupplierReceiptDetailResponseDto> details;
+    private String warehouseCode;
 
 }

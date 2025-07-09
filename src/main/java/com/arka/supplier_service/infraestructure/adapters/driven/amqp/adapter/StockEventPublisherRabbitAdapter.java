@@ -26,6 +26,10 @@ public class StockEventPublisherRabbitAdapter implements StockEventPublisher {
 
         StockReceivedEventDto event = new StockReceivedEventDto(receipt.getWarehouseCode(), items);
 
+        // Log para depuración
+        System.out.println("[DEBUG] Enviando evento StockReceivedEventDto: " + event);
+        System.out.println("[DEBUG] warehouseCode: " + receipt.getWarehouseCode());
+
         rabbitTemplate.convertAndSend("stock", "stock.received", event);
 
     }
