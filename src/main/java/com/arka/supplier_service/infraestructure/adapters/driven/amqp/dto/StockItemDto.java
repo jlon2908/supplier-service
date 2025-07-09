@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class StockItemDto {
     private String sku;
     private Integer quantity;
+    private String warehouseCode;
 }

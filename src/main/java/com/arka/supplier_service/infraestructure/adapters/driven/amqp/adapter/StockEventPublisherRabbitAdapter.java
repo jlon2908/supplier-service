@@ -21,16 +21,15 @@ public class StockEventPublisherRabbitAdapter implements StockEventPublisher {
     @Override
     public void publishStockReceivedEvent(SupplierReceipt receipt) {
         List<StockItemDto> items = receipt.getDetails().stream()
-                .map(detail -> new StockItemDto(detail.getSku(), detail.getQuantityReceived()))
+                .map(detail -> new StockItemDto(detail.getSku(), detail.getQuantityReceived(), receipt.getWarehouseCode()))
                 .collect(Collectors.toList());
 
-        StockReceivedEventDto event = new StockReceivedEventDto(receipt.getWarehouseCode(), items);
+        StockReceivedEventDto event = new StockReceivedEventDto(items);
 
         // Log para depuración
         System.out.println("[DEBUG] Enviando evento StockReceivedEventDto: " + event);
-        System.out.println("[DEBUG] warehouseCode: " + receipt.getWarehouseCode());
+        System.out.println("[DEBUG] warehouseCode (por item): " + items.stream().map(StockItemDto::getWarehouseCode).toList());
 
         rabbitTemplate.convertAndSend("stock", "stock.received", event);
-
     }
 }

@@ -11,6 +11,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StockReceivedEventDto {
-    private String warehouseCode;
     private List<StockItemDto> items;
 }
